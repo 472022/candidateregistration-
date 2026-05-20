@@ -6,6 +6,7 @@
 <title>Admin Dashboard — JobPortal</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --navy: #0f1f3d;
@@ -639,6 +640,96 @@ tbody tr.criteria-no  td:first-child { box-shadow: inset 4px 0 0 var(--error); }
   display: none;
 }
 .loading-overlay.show { display: flex; }
+
+/* ─── Employer View ─── */
+.emp-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; min-width: 1300px; }
+.emp-table thead th {
+  background: #f1f4fb; padding: 10px 12px; text-align: left;
+  font-size: 0.65rem; font-weight: 700; color: var(--text-3);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  border-bottom: 2px solid var(--border); white-space: nowrap;
+}
+.emp-table thead th.hr-col { background: #dbeafe; color: #1e40af; }
+.emp-table tbody tr { border-bottom: 1px solid var(--border); vertical-align: top; }
+.emp-table tbody tr:hover { background: #fafbff; }
+.emp-table td { padding: 10px 12px; }
+.emp-table td.hr-col { background: #eff6ff; border-left: 2px solid #bfdbfe; }
+
+.emp-field { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+.emp-field:last-child { margin-bottom: 0; }
+.emp-field-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.emp-input {
+  width: 100%; padding: 5px 8px;
+  border: 1.5px solid var(--border); border-radius: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  background: var(--surface); color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.emp-input:focus { border-color: var(--blue); }
+.emp-input[type="date"] { cursor: pointer; }
+.emp-select {
+  width: 100%; padding: 5px 8px;
+  border: 1.5px solid var(--border); border-radius: 6px;
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  background: var(--surface); color: var(--text); outline: none; cursor: pointer;
+}
+.emp-select:focus { border-color: var(--blue); }
+
+.emp-hr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.emp-ref-label {
+  font-size: 0.72rem; color: var(--blue); font-style: italic;
+  font-weight: 600; margin-top: 4px; display: block;
+  max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.emp-ref-btn {
+  font-size: 0.68rem; color: var(--blue); text-decoration: underline;
+  background: none; border: none; cursor: pointer; padding: 0; margin-top: 2px;
+}
+.emp-ref-btn:hover { color: var(--navy); }
+
+/* Reference modal */
+.ref-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 9999; display: none;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.ref-modal-overlay.show { display: flex; }
+.ref-modal-card {
+  background: var(--surface); border-radius: 14px;
+  padding: 28px 28px 22px; width: 100%; max-width: 380px;
+  box-shadow: var(--shadow-lg);
+}
+.ref-modal-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.ref-modal-card p { font-size: 0.78rem; color: var(--text-3); margin-bottom: 14px; }
+.ref-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+.emp-controls {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  align-items: flex-end; margin-bottom: 16px;
+  background: #eff6ff; border: 1px solid #bfdbfe;
+  border-radius: 10px; padding: 14px 16px;
+}
+.emp-controls-group { display: flex; flex-direction: column; gap: 4px; }
+.emp-controls-group label { font-size: 0.72rem; font-weight: 700; color: #1e40af; }
+.btn-excel {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: var(--radius); border: none;
+  background: #059669; color: #fff; font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.15s;
+}
+.btn-excel:hover { background: #047857; }
+.btn-showall {
+  padding: 8px 14px; border-radius: var(--radius);
+  border: 1.5px solid var(--border); background: var(--surface);
+  font-family: 'DM Sans', sans-serif; font-size: 0.83rem;
+  font-weight: 600; color: var(--text-2); cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-showall:hover { border-color: var(--blue); color: var(--blue); }
 </style>
 </head>
 <body>
@@ -701,6 +792,10 @@ tbody tr.criteria-no  td:first-child { box-shadow: inset 4px 0 0 var(--error); }
         <a onclick="showPage('analytics')" id="nav-analytics">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           Analytics
+        </a>
+        <a onclick="showPage('employer')" id="nav-employer">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+          Employer View
         </a>
       </nav>
     </div>
@@ -883,12 +978,68 @@ tbody tr.criteria-no  td:first-child { box-shadow: inset 4px 0 0 var(--error); }
       </div>
     </div>
 
+    <!-- Employer View Page -->
+    <div class="page" id="page-employer">
+
+      <div class="emp-controls">
+        <div class="emp-controls-group">
+          <label>Filter by Interview Date</label>
+          <input type="date" id="emp-filter-date" class="emp-input" style="width:200px" onchange="loadEmployerView()">
+        </div>
+        <button class="btn-showall" onclick="document.getElementById('emp-filter-date').value='';loadEmployerView()">
+          Show All Dates
+        </button>
+        <div style="margin-left:auto">
+          <button class="btn-excel" onclick="exportExcel()">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Download Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div style="overflow-x:auto">
+          <table class="emp-table">
+            <thead>
+              <tr>
+                <th style="width:180px">Candidate Profile</th>
+                <th style="width:170px">Academics & Eligibility</th>
+                <th style="width:200px">Interview & Medical Parameters</th>
+                <th style="width:190px">Reference Parameters</th>
+                <th class="hr-col" style="width:300px">Operational HR Identifiers</th>
+              </tr>
+            </thead>
+            <tbody id="emp-tbody">
+              <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="emp-no-data" class="empty-state" style="display:none">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <div>No records match the selected date filter.</div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 <div class="loading-overlay" id="loading-overlay">
   <svg class="spin" width="36" height="36" fill="none" stroke="#1a4fad" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+</div>
+
+<!-- Reference Detail Modal -->
+<div class="ref-modal-overlay" id="ref-modal-overlay">
+  <div class="ref-modal-card">
+    <h3>Specify Reference Name</h3>
+    <p>Enter the name or context for this "Others" reference parameter:</p>
+    <input type="text" id="ref-modal-input" class="emp-input" placeholder="Enter full reference name...">
+    <div class="ref-modal-actions">
+      <button class="btn-sm btn-export" onclick="saveRefModal()">Save Reference</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -964,7 +1115,8 @@ document.getElementById('login-password').addEventListener('keydown', e => {
 const pageConfig = {
   dashboard: { title: 'Dashboard', sub: 'Overview of recruitment activity' },
   candidates: { title: 'All Candidates', sub: 'Manage and update candidate records' },
-  analytics:  { title: 'Analytics', sub: 'Detailed data insights and charts' }
+  analytics:  { title: 'Analytics', sub: 'Detailed data insights and charts' },
+  employer:   { title: 'Employer View', sub: 'Post-selection HR fields — medical, joining, seeding, reference' }
 };
 
 function showPage(name) {
@@ -978,6 +1130,7 @@ function showPage(name) {
   if (name === 'candidates') loadCandidates();
   if (name === 'analytics') loadAnalytics();
   if (name === 'dashboard') loadDashboard();
+  if (name === 'employer') loadEmployerView();
 }
 
 // ─── Dashboard ────────────────────────────────
@@ -1368,6 +1521,262 @@ function showToast(msg, type = '') {
   t.textContent = msg;
   t.className = 'toast ' + type + ' show';
   setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── Employer View ─────────────────────────────
+let employerCandidates = [];
+let activeRefId = null;
+
+async function loadEmployerView() {
+  const date = document.getElementById('emp-filter-date')?.value || '';
+  const params = new URLSearchParams({ date, sort: 'interview_date', dir: 'asc' });
+  try {
+    const res = await fetch('/api/admin/candidates?' + params);
+    if (res.status === 401) { doLogout(); return; }
+    employerCandidates = await res.json();
+    renderEmployerTable();
+  } catch(e) {
+    showToast('Failed to load employer data', 'error');
+  }
+}
+
+function renderEmployerTable() {
+  const tbody = document.getElementById('emp-tbody');
+  const noData = document.getElementById('emp-no-data');
+
+  if (!employerCandidates.length) {
+    tbody.innerHTML = '';
+    noData.style.display = '';
+    return;
+  }
+  noData.style.display = 'none';
+
+  const badgeCls = met => met === 'YES' ? 'badge badge-yes' : 'badge badge-no';
+  const pctColor = v => v > 0 ? `<span class="${v >= 50 ? 'pct-ok' : 'pct-fail'}">${v}%</span>` : '<span style="color:var(--text-3)">—</span>';
+
+  tbody.innerHTML = employerCandidates.map(c => `
+    <tr>
+      <!-- Col 1: Candidate Profile -->
+      <td>
+        <div class="td-name" style="font-size:0.85rem">${c.name}</div>
+        <div class="td-sub">Father: ${c.father_name}</div>
+        <div class="td-sub">📱 ${c.mobile}</div>
+        <div class="td-sub" style="font-family:monospace;font-size:0.7rem">${c.pan}</div>
+        <div class="td-sub" style="color:var(--blue);font-size:0.68rem">Aadhaar: [Redacted]</div>
+      </td>
+
+      <!-- Col 2: Academics & Eligibility -->
+      <td>
+        <span class="${badgeCls(c.criteria_met)}" style="font-size:0.68rem;margin-bottom:6px;display:inline-flex">
+          ${c.criteria_met === 'YES' ? '✓ Eligible' : '✗ Ineligible'}
+        </span>
+        <div class="td-sub" style="margin-top:4px"><b>Age:</b> ${c.age}y (${c.dob})</div>
+        <div class="td-sub"><b>Track:</b> ${c.education_track}</div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;margin-top:4px">
+          <div class="acad-row"><span class="acad-lbl">SSLC</span>${pctColor(c.sslc_per)}</div>
+          ${c.puc_per > 0 ? `<div class="acad-row"><span class="acad-lbl">PUC</span>${pctColor(c.puc_per)}</div>` : ''}
+          ${c.iti_per > 0 ? `<div class="acad-row"><span class="acad-lbl">ITI</span>${pctColor(c.iti_per)}</div>` : ''}
+          ${c.grad_per > 0 ? `<div class="acad-row"><span class="acad-lbl">Grad</span>${pctColor(c.grad_per)}</div>` : ''}
+        </div>
+      </td>
+
+      <!-- Col 3: Interview & Medical Parameters -->
+      <td>
+        <div class="emp-field">
+          <span class="emp-field-label">Interview Date</span>
+          <input type="date" class="emp-input" value="${c.interview_date || ''}"
+            onchange="saveEmpField(${c.id}, 'interview_date', this.value)">
+        </div>
+        <div class="emp-field">
+          <span class="emp-field-label">Medical Date</span>
+          <input type="date" class="emp-input" value="${c.medical_date || ''}"
+            onchange="saveEmpField(${c.id}, 'medical_date', this.value)">
+        </div>
+        <div class="emp-field">
+          <span class="emp-field-label">Interview Status</span>
+          <select class="emp-select" onchange="saveEmpField(${c.id}, 'interview_status', this.value)">
+            <option ${c.interview_status === 'Pending'  ? 'selected' : ''}>Pending</option>
+            <option ${c.interview_status === 'Selected' ? 'selected' : ''}>Selected</option>
+            <option ${c.interview_status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+          </select>
+        </div>
+        <div class="emp-field">
+          <span class="emp-field-label">Medical Status</span>
+          <select class="emp-select" onchange="saveEmpField(${c.id}, 'medical_status', this.value)">
+            <option ${c.medical_status === 'Pending'      ? 'selected' : ''}>Pending</option>
+            <option ${c.medical_status === 'Medical Fit'  ? 'selected' : ''}>Medical Fit</option>
+            <option ${c.medical_status === 'Medical Unfit'? 'selected' : ''}>Medical Unfit</option>
+          </select>
+        </div>
+      </td>
+
+      <!-- Col 4: Reference Parameters -->
+      <td>
+        <div class="emp-field">
+          <span class="emp-field-label">Reference Channel</span>
+          <select class="emp-select" onchange="handleRefTypeChange(${c.id}, this.value)">
+            <option value="Implants" ${(c.reference_type || 'Implants') === 'Implants' ? 'selected' : ''}>Implants</option>
+            <option value="Others"   ${c.reference_type === 'Others' ? 'selected' : ''}>Others</option>
+          </select>
+        </div>
+        ${c.reference_type === 'Others' ? `
+          <span id="refLabel-${c.id}" class="emp-ref-label">
+            ${c.reference_detail ? '(' + c.reference_detail + ')' : '(No reference name set)'}
+          </span>
+          <button class="emp-ref-btn" onclick="triggerRefModal(${c.id}, '${(c.reference_detail || '').replace(/'/g, "\\'")}')">
+            Edit Reference Name
+          </button>
+        ` : `<span id="refLabel-${c.id}" class="emp-ref-label"></span>`}
+      </td>
+
+      <!-- Col 5: Operational HR Identifiers -->
+      <td class="hr-col">
+        <div class="emp-hr-grid">
+          <div class="emp-field">
+            <span class="emp-field-label">Date of Joining</span>
+            <input type="date" class="emp-input" value="${c.doj || ''}"
+              onchange="saveEmpField(${c.id}, 'doj', this.value)">
+          </div>
+          <div class="emp-field">
+            <span class="emp-field-label">Employee ID</span>
+            <input type="text" class="emp-input" value="${c.employee_id || ''}" placeholder="EMP-123"
+              onchange="saveEmpField(${c.id}, 'employee_id', this.value)">
+          </div>
+          <div class="emp-field">
+            <span class="emp-field-label">OMS ID</span>
+            <input type="text" class="emp-input" value="${c.oms_id || ''}" placeholder="OMS-990"
+              onchange="saveEmpField(${c.id}, 'oms_id', this.value)">
+          </div>
+          <div class="emp-field">
+            <span class="emp-field-label">Aadhaar Seeding</span>
+            <select class="emp-select" onchange="saveEmpField(${c.id}, 'aadhaar_seeding', this.value)">
+              <option ${(c.aadhaar_seeding || 'Pending') === 'Pending'          ? 'selected' : ''}>Pending</option>
+              <option ${c.aadhaar_seeding === 'Seeded'                          ? 'selected' : ''}>Seeded</option>
+              <option ${c.aadhaar_seeding === 'Failed/Unseeded'                 ? 'selected' : ''}>Failed/Unseeded</option>
+            </select>
+          </div>
+          <div class="emp-field">
+            <span class="emp-field-label">Bank Name</span>
+            <input type="text" class="emp-input" value="${c.bank_name || ''}" placeholder="SBI, HDFC..."
+              onchange="saveEmpField(${c.id}, 'bank_name', this.value)">
+          </div>
+          <div class="emp-field">
+            <span class="emp-field-label">AP Code</span>
+            <input type="text" class="emp-input" value="${c.ap_code || ''}" placeholder="AP-88"
+              onchange="saveEmpField(${c.id}, 'ap_code', this.value)">
+          </div>
+          <div class="emp-field" style="grid-column:span 2">
+            <span class="emp-field-label">AP Mail ID</span>
+            <input type="email" class="emp-input" value="${c.ap_mail_id || ''}" placeholder="hr@apcorp.com"
+              onchange="saveEmpField(${c.id}, 'ap_mail_id', this.value)">
+          </div>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function saveEmpField(id, field, value) {
+  try {
+    const res = await fetch(`/api/admin/candidates/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [field]: value })
+    });
+    if (!res.ok) throw new Error();
+    showToast('Saved', 'success');
+    statsCache = null;
+  } catch(e) {
+    showToast('Save failed', 'error');
+  }
+}
+
+function handleRefTypeChange(id, value) {
+  saveEmpField(id, 'reference_type', value);
+  if (value === 'Others') {
+    const rec = employerCandidates.find(c => c.id === id);
+    triggerRefModal(id, rec?.reference_detail || '');
+  } else {
+    const lbl = document.getElementById(`refLabel-${id}`);
+    if (lbl) lbl.textContent = '';
+  }
+}
+
+function triggerRefModal(id, current) {
+  activeRefId = id;
+  document.getElementById('ref-modal-input').value = current || '';
+  document.getElementById('ref-modal-overlay').classList.add('show');
+  document.getElementById('ref-modal-input').focus();
+}
+
+async function saveRefModal() {
+  const val = document.getElementById('ref-modal-input').value.trim();
+  if (activeRefId) {
+    await saveEmpField(activeRefId, 'reference_detail', val);
+    const lbl = document.getElementById(`refLabel-${activeRefId}`);
+    if (lbl) lbl.textContent = val ? `(${val})` : '(No reference name set)';
+    const rec = employerCandidates.find(c => c.id === activeRefId);
+    if (rec) rec.reference_detail = val;
+  }
+  document.getElementById('ref-modal-overlay').classList.remove('show');
+  activeRefId = null;
+}
+
+// Close modal on overlay click
+document.getElementById('ref-modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) { this.classList.remove('show'); activeRefId = null; }
+});
+
+function exportExcel() {
+  if (!employerCandidates.length) {
+    showToast('No data to export', 'error'); return;
+  }
+  const rows = employerCandidates.map(c => ({
+    'Candidate Name': c.name,
+    'Father Name': c.father_name,
+    'Mobile': c.mobile,
+    'PAN': c.pan,
+    'DOB': c.dob,
+    'Age': c.age,
+    'Gender': c.gender,
+    'Marital Status': c.marital_status,
+    'Candidate Type': c.candidate_type,
+    'Education Track': c.education_track,
+    'Degree': c.degree,
+    'PUC Branch': c.puc_branch,
+    'ITI Trade': c.iti_trade,
+    'SSLC %': c.sslc_per,
+    'PUC %': c.puc_per > 0 ? c.puc_per : 'N/A',
+    'ITI %': c.iti_per > 0 ? c.iti_per : 'N/A',
+    'Graduation %': c.grad_per > 0 ? c.grad_per : 'N/A',
+    'Religion': c.religion,
+    'Category': c.category,
+    'Location': c.location,
+    'District': c.district,
+    'Eligibility': c.criteria_met,
+    'Interview Date': c.interview_date,
+    'Medical Date': c.medical_date || 'N/A',
+    'Interview Status': c.interview_status,
+    'Medical Status': c.medical_status,
+    'Reference Channel': c.reference_type || 'Implants',
+    'Reference Detail': c.reference_detail || 'N/A',
+    'Date of Joining': c.doj || 'N/A',
+    'Employee ID': c.employee_id || 'N/A',
+    'OMS ID': c.oms_id || 'N/A',
+    'Aadhaar Seeding': c.aadhaar_seeding || 'Pending',
+    'Bank Name': c.bank_name || 'N/A',
+    'AP Code': c.ap_code || 'N/A',
+    'AP Mail ID': c.ap_mail_id || 'N/A',
+    'Submitted At': c.submitted_at
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Recruitment Roster');
+  ws['!cols'] = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length + 2, 14) }));
+
+  const date = document.getElementById('emp-filter-date')?.value || '';
+  XLSX.writeFile(wb, date ? `Recruitment_${date}.xlsx` : 'Master_Recruitment_Report.xlsx');
 }
 </script>
 </body>

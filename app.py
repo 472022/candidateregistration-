@@ -30,10 +30,30 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def _migrate(conn):
+    """Add new columns to existing databases without data loss."""
+    new_cols = [
+        ("medical_date",    "TEXT DEFAULT ''"),
+        ("reference_type",  "TEXT DEFAULT 'Implants'"),
+        ("reference_detail","TEXT DEFAULT ''"),
+        ("doj",             "TEXT DEFAULT ''"),
+        ("employee_id",     "TEXT DEFAULT ''"),
+        ("oms_id",          "TEXT DEFAULT ''"),
+        ("aadhaar_seeding", "TEXT DEFAULT 'Pending'"),
+        ("bank_name",       "TEXT DEFAULT ''"),
+        ("ap_code",         "TEXT DEFAULT ''"),
+        ("ap_mail_id",      "TEXT DEFAULT ''"),
+    ]
+    for col, defn in new_cols:
+        try:
+            conn.execute(f"ALTER TABLE candidates ADD COLUMN {col} {defn}")
+        except Exception:
+            pass  # column already exists
+
 def init_db():
     conn = get_db()
     c = conn.cursor()
-    
+
     c.execute('''CREATE TABLE IF NOT EXISTS candidates (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -62,8 +82,20 @@ def init_db():
         criteria_met TEXT DEFAULT 'NO',
         interview_status TEXT DEFAULT 'Pending',
         medical_status TEXT DEFAULT 'Pending',
-        submitted_at TEXT DEFAULT CURRENT_TIMESTAMP
+        submitted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        medical_date TEXT DEFAULT '',
+        reference_type TEXT DEFAULT 'Implants',
+        reference_detail TEXT DEFAULT '',
+        doj TEXT DEFAULT '',
+        employee_id TEXT DEFAULT '',
+        oms_id TEXT DEFAULT '',
+        aadhaar_seeding TEXT DEFAULT 'Pending',
+        bank_name TEXT DEFAULT '',
+        ap_code TEXT DEFAULT '',
+        ap_mail_id TEXT DEFAULT ''
     )''')
+
+    _migrate(conn)
 
     c.execute('''CREATE TABLE IF NOT EXISTS admins (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -288,7 +320,12 @@ def get_candidates():
 @login_required
 def update_candidate(cid):
     data = request.get_json()
-    allowed_fields = ['interview_status', 'medical_status']
+    allowed_fields = [
+        'interview_status', 'medical_status', 'interview_date',
+        'medical_date', 'reference_type', 'reference_detail',
+        'doj', 'employee_id', 'oms_id', 'aadhaar_seeding',
+        'bank_name', 'ap_code', 'ap_mail_id'
+    ]
     
     updates = {k: v for k, v in data.items() if k in allowed_fields}
     if not updates:
@@ -404,8 +441,11 @@ def export_candidates():
                'Gender', 'Marital Status', 'Candidate Type', 'Education Track',
                'Degree', 'PUC Branch', 'ITI Trade', 'SSLC%', 'PUC%', 'ITI%',
                'Graduation%', 'Religion', 'Category', 'Location', 'District',
-               'Interview Date', 'Criteria Met', 'Interview Status', 'Medical Status', 'Submitted At',
-               'Aadhaar']
+               'Interview Date', 'Criteria Met', 'Interview Status', 'Medical Status',
+               'Medical Date', 'Reference Channel', 'Reference Detail',
+               'Date of Joining', 'Employee ID', 'OMS ID', 'Aadhaar Seeding',
+               'Bank Name', 'AP Code', 'AP Mail ID',
+               'Submitted At', 'Aadhaar']
     writer.writerow(headers)
 
     for row in rows:
@@ -417,8 +457,13 @@ def export_candidates():
             r['sslc_per'], r['puc_per'], r['iti_per'], r['grad_per'],
             r['religion'], r['category'], r['location'], r['district'],
             r['interview_date'], r['criteria_met'], r['interview_status'],
-            r['medical_status'], r['submitted_at'],
-            '[Redacted]'  # Aadhaar excluded from export
+            r['medical_status'],
+            r.get('medical_date', ''), r.get('reference_type', 'Implants'),
+            r.get('reference_detail', ''), r.get('doj', ''),
+            r.get('employee_id', ''), r.get('oms_id', ''),
+            r.get('aadhaar_seeding', 'Pending'), r.get('bank_name', ''),
+            r.get('ap_code', ''), r.get('ap_mail_id', ''),
+            r['submitted_at'], '[Redacted]'
         ])
 
     from flask import Response

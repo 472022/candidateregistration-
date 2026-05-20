@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Registration & Employer Dashboard</title>
+    <!-- Tailwind CSS for modern UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS Library for client-side Excel parsing and generation -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900 minimal-scrollbar">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wide">JobPortal System</h1>
+            <div class="space-x-2">
+                <button onclick="switchView('candidate')" id="btn-cand" class="px-4 py-2 rounded bg-blue-700 font-semibold shadow">Candidate Form</button>
+                <button onclick="switchView('employer')" id="btn-emp" class="px-4 py-2 rounded hover:bg-blue-500 transition">Employer Dashboard</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-2 py-8">
+
+        <!-- ================= CANDIDATE PORTAL ================= -->
+        <section id="candidate-view" class="block">
+            <div class="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6 text-blue-600 border-b pb-2">Candidate Application Form / ಅಭ್ಯರ್ಥಿ ಅರ್ಜಿ ನಮೂನೆ</h2>
+                
+                <form id="registrationForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                    <!-- Basic Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Full Name / ಪೂರ್ಣ ಹೆಸರು *</label>
+                            <input type="text" id="name" required class="mt-1 block w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Father's Name / ತಂದೆಯ ಹೆಸರು *</label>
+                            <input type="text" id="fatherName" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Mobile Number *</label>
+                            <input type="tel" id="mobile" pattern="[0-9]{10}" placeholder="10-digit number" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Aadhaar Card Number *</label>
+                            <input type="text" id="aadhaar" pattern="[0-9]{12}" placeholder="12-digit number" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">PAN Card Number *</label>
+                            <input type="text" id="pan" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" placeholder="ABCDE1234F" required class="mt-1 block w-full p-2 border border-gray-300 rounded uppercase">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Date of Birth (As per SSLC Marks Card) *</label>
+                            <input type="date" id="dob" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Demographics & Status -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gender / ಲಿಂಗ *</label>
+                            <div class="flex space-x-4 mt-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" value="Male" required class="form-radio text-blue-600">
+                                    <span class="ml-2">Male</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="gender" value="Female" class="form-radio text-blue-600">
+                                    <span class="ml-2">Female</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Marital Status / ವೈವಾಹಿಕ ಸ್ಥಿತಿ *</label>
+                            <div class="flex space-x-4 mt-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="maritalStatus" value="Unmarried" required class="form-radio text-blue-600">
+                                    <span class="ml-2">Unmarried</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="maritalStatus" value="Married" class="form-radio text-blue-600">
+                                    <span class="ml-2">Married</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Candidate Type / ಅಭ್ಯರ್ಥಿ ಪ್ರಕಾರ *</label>
+                            <select id="candidateType" required class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                <option value="">-- Select Option --</option>
+                                <option value="Fresher">Fresher</option>
+                                <option value="Rejoiner">Rejoiner</option>
+                                <option value="Outside Apprenticeship Completed">Outside Apprenticeship Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Education Details -->
+                    <div class="bg-gray-50 p-4 rounded border space-y-4">
+                        <h3 class="text-md font-semibold text-gray-800">Educational Background / ಶೈಕ್ಷಣಿಕ ವಿವರಗಳು</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Education Track / ಶಿಕ್ಷಣ *</label>
+                                <select id="educationTrack" onchange="toggleEducationFields()" required class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                    <option value="ITI">ITI</option>
+                                    <option value="PUC">PUC</option>
+                                    <option value="ITI+PUC">ITI + PUC</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Degree / ಪದವಿ (If Applicable)</label>
+                                <select id="degree" class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                    <option value="None">None / ಅನ್ವಯಿಸುವುದಿಲ್ಲ</option>
+                                    <option value="Graduation">Graduation ಪದವಿ</option>
+                                    <option value="BA">BA ಬಿಎ</option>
+                                    <option value="B.Com">B.Com ಬಿ.ಕಾಂ</option>
+                                    <option value="BBA">BBA ಬಿಬಿಎ</option>
+                                    <option value="BCA">BCA ಬಿಸಿಎ</option>
+                                    <option value="B.Sc">B.Sc ಬಿ.ಎಸ್ಸಿ</option>
+                                    <option value="B.Ed">B.Ed ಬಿ.ಎಡ್</option>
+                                    <option value="D.Ed">D.Ed ಡಿ.ಎಡ್</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Academic Subfields -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div id="puc-branch-wrapper" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700">PUC Stream / ಶಾಖೆ</label>
+                                <select id="pucBranch" class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                    <option value="">-- Select Stream --</option>
+                                    <option value="Arts">Arts</option>
+                                    <option value="Commerce">Commerce</option>
+                                    <option value="Science">Science</option>
+                                </select>
+                            </div>
+
+                            <div id="iti-trade-wrapper">
+                                <label class="block text-sm font-medium text-gray-700">ITI Trade / ಟ್ರೇಡ್</label>
+                                <select id="itiTrade" class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                    <option value="">-- Select Trade --</option>
+                                    <option value="Electrician">Electrician ಎಲೆಕ್ಟ್ರಿಷಿಯನ್</option>
+                                    <option value="Fitter">Fitter ಫಿಟ್ಟರ್</option>
+                                    <option value="Welder">Welder ವೆಲ್ಡರ್</option>
+                                    <option value="Mechanic Diesel">Mechanic Diesel ಮೆಕ್ಯಾನಿಕ್ ಡೀಸೆಲ್</option>
+                                    <option value="Electronics Mechanic">Electronics Mechanic ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ ಮೆಕ್ಯಾನಿಕ್</option>
+                                    <option value="ADVANCED CNC MACHINING TECHNICIAN">ADVANCED CNC MACHINING TECHNICIAN ಸುಧಾರಿತ ಸಿಎನ್‌ಸಿ ಮೆಷಿನಿಂಗ್ ತಂತ್ರಜ್ಞ</option>
+                                    <option value="Motor Mechanic Vehicle">Motor Mechanic Vehicle ಮೋಟಾರ್ ಮೆಕ್ಯಾನಿಕ್ ವಾಹನ</option>
+                                    <option value="Motor Electric Vehicle">Motor Electric Vehicle ಮೋಟಾರ್ ಎಲೆಕ್ಟ್ರಿಕ್ ವಾಹನ</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Percentages Metric Grid -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">SSLC % / ಎಸ್.ಎಸ್.ಎಲ್.ಸಿ % *</label>
+                                <input type="number" id="sslcPer" step="0.01" min="0" max="100" placeholder="%" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                            </div>
+                            <div id="puc-per-wrapper" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700">PUC % *</label>
+                                <input type="number" id="pucPer" step="0.01" min="0" max="100" placeholder="%" class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                            </div>
+                            <div id="iti-per-wrapper">
+                                <label class="block text-sm font-medium text-gray-700">ITI % *</label>
+                                <input type="number" id="itiPer" step="0.01" min="0" max="100" placeholder="%" class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                            </div>
+                            <div id="grad-per-wrapper" class="hidden">
+                                <label class="block text-sm font-medium text-gray-700">Graduation % *</label>
+                                <input type="number" id="gradPer" step="0.01" min="0" max="100" placeholder="%" class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Background & Interview Parameters -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Religion / ಧರ್ಮ *</label>
+                            <select id="religion" required class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                <option value="">-- Select Religion --</option>
+                                <option value="Hindu">Hindu</option>
+                                <option value="Muslim">Muslim</option>
+                                <option value="Christian">Christian</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Category / ವರ್ಗ *</label>
+                            <select id="category" required class="mt-1 block w-full p-2 border border-gray-300 rounded bg-white">
+                                <option value="">-- Select Category --</option>
+                                <option value="General">General</option>
+                                <option value="2A">2A</option>
+                                <option value="2B">2B</option>
+                                <option value="3B">3B</option>
+                                <option value="SC">SC</option>
+                                <option value="ST">ST</option>
+                                <option value="OBC">OBC</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Village/City / ಗ್ರಾಮ/ನಗರ *</label>
+                            <input type="text" id="location" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">District / ಜಿಲ್ಲೆ *</label>
+                            <input type="text" id="district" required class="mt-1 block w-full p-2 border border-gray-300 rounded">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-red-600 font-bold">Planned Interview Date / ಸಂದರ್ಶನ ದಿನಾಂಕ *</label>
+                            <input type="date" id="interviewDate" required class="mt-1 block w-full p-2 border border-red-300 rounded bg-red-50">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-green-600 text-white p-3 rounded font-bold hover:bg-green-700 transition shadow">
+                        Submit Application / ಅರ್ಜಿಯನ್ನು ಸಲ್ಲಿಸಿ
+                    </button>
+                </form>
+            </div>
+        </section>
+
+
+        <!-- ================= EMPLOYER PORTAL ================= -->
+        <section id="employer-view" class="hidden">
+            <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Employer Control Dashboard</h2>
+                
+                <!-- Controls Grid -->
+                <div class="flex flex-col md:flex-row items-end justify-between gap-4 bg-blue-50 p-4 rounded border border-blue-200">
+                    <div class="flex flex-col sm:flex-row items-end gap-4 w-full md:w-auto">
+                        <div class="w-full sm:w-64">
+                            <label class="block text-sm font-medium text-blue-800 mb-1">Filter Records by Interview Date</label>
+                            <input type="date" id="filterDate" onchange="renderEmployerTable()" class="w-full p-2 border border-blue-300 rounded bg-white">
+                        </div>
+                        <button onclick="clearDateFilter()" class="w-full sm:w-auto bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition whitespace-nowrap">
+                            Show All Dates
+                        </button>
+                    </div>
+                    
+                    <button onclick="exportToExcel()" class="w-full md:w-auto bg-emerald-600 text-white px-5 py-2.5 rounded font-bold hover:bg-emerald-700 transition shadow flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Download Excel Dump
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Enterprise Desktop Workspace View Matrix -->
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto">
+                <table class="w-full text-xs divide-y divide-gray-200 min-w-[1400px]">
+                    <thead class="bg-gray-100 font-bold text-gray-700 uppercase tracking-wider">
+                        <tr>
+                            <th class="px-2 py-3 text-left w-48">Candidate Profile</th>
+                            <th class="px-2 py-3 text-left w-44">Academics & Eligibility</th>
+                            <th class="px-2 py-3 text-left w-52">Interview & Medical Parameters</th>
+                            <th class="px-2 py-3 text-left w-48">Reference Parameters</th>
+                            <th class="px-2 py-3 text-left bg-blue-100 text-blue-900 w-72">Operational HR Identifiers</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employerTableBody" class="divide-y divide-gray-200">
+                        <!-- Dynamic Injections via Scripting Engine -->
+                    </tbody>
+                </table>
+                <div id="noDataMessage" class="p-8 text-center text-gray-500 font-medium hidden">
+                    No records match the active historical date parameters.
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- UI Modal Popup Box component for Dynamic References -->
+    <div id="referenceModal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full space-y-4">
+            <h3 class="text-md font-bold text-gray-900">Reference Verification Required</h3>
+            <p class="text-xs text-gray-600">Please provide the name or context details for this "Others" reference parameter:</p>
+            <input type="text" id="modalRefInput" placeholder="Enter full reference name..." class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="flex justify-end space-x-2">
+                <button onclick="saveModalReference()" class="bg-blue-600 text-white px-4 py-2 rounded text-xs font-bold hover:bg-blue-700">Save Reference</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripting Execution Engine Layer -->
+    <script>
+        // Data Storage Engine Array with baseline system parameters mapping variables
+        let applications = [
+            {
+                id: 1715600000001,
+                name: "Ramesh Kumar",
+                fatherName: "Anand Kumar",
+                mobile: "9876543210",
+                aadhaar: "123456789012",
+                pan: "ABCDE1234F",
+                dob: "2005-06-15", 
+                gender: "Male",
+                maritalStatus: "Unmarried",
+                candidateType: "Fresher",
+                educationTrack: "ITI+PUC",
+                degree: "None",
+                pucBranch: "Science",
+                itiTrade: "Fitter",
+                sslcPer: 78.50,
+                pucPer: 68.20,
+                itiPer: 82.00,
+                gradPer: 0,
+                religion: "Hindu",
+                category: "2A",
+                location: "Maddur",
+                district: "Mandya",
+                interviewDate: "2026-05-20",
+                age: 20,
+                criteriaMet: "YES",
+                // Employer Dynamic Fields Initializations
+                medicalDate: "",
+                referenceType: "Implants",
+                referenceDetail: "",
+                doj: "",
+                employeeId: "",
+                omsId: "",
+                aadhaarSeeding: "Pending",
+                bankName: "",
+                apCode: "",
+                apMailId: ""
+            }
+        ];
+
+        let activeEditingAppId = null; // System anchor state tracker for Reference Modal actions
+
+        function switchView(view) {
+            const candView = document.getElementById('candidate-view');
+            const empView = document.getElementById('employer-view');
+            const btnCand = document.getElementById('btn-cand');
+            const btnEmp = document.getElementById('btn-emp');
+
+            if (view === 'candidate') {
+                candView.classList.replace('hidden', 'block');
+                empView.classList.replace('block', 'hidden');
+                btnCand.className = "px-4 py-2 rounded bg-blue-700 font-semibold shadow text-white";
+                btnEmp.className = "px-4 py-2 rounded hover:bg-blue-500 transition text-white";
+            } else {
+                candView.classList.replace('block', 'hidden');
+                empView.classList.replace('hidden', 'block');
+                btnEmp.className = "px-4 py-2 rounded bg-blue-700 font-semibold shadow text-white";
+                btnCand.className = "px-4 py-2 rounded hover:bg-blue-500 transition text-white";
+                renderEmployerTable();
+            }
+        }
+
+        function toggleEducationFields() {
+            const track = document.getElementById('educationTrack').value;
+            const degreeSelect = document.getElementById('degree');
+            const pucBranchW = document.getElementById('puc-branch-wrapper');
+            const itiTradeW = document.getElementById('iti-trade-wrapper');
+            const pucPerW = document.getElementById('puc-per-wrapper');
+            const itiPerW = document.getElementById('iti-per-wrapper');
+            const gradPerW = document.getElementById('grad-per-wrapper');
+
+            document.getElementById('pucPer').required = false;
+            document.getElementById('itiPer').required = false;
+
+            if (track === 'ITI') {
+                pucBranchW.classList.add('hidden');
+                itiTradeW.classList.remove('hidden');
+                pucPerW.classList.add('hidden');
+                itiPerW.classList.remove('hidden');
+                document.getElementById('itiPer').required = true;
+            } else if (track === 'PUC') {
+                pucBranchW.classList.remove('hidden');
+                itiTradeW.classList.add('hidden');
+                pucPerW.classList.remove('hidden');
+                itiPerW.classList.add('hidden');
+                document.getElementById('pucPer').required = true;
+            } else if (track === 'ITI+PUC') {
+                pucBranchW.classList.remove('hidden');
+                itiTradeW.classList.remove('hidden');
+                pucPerW.classList.remove('hidden');
+                itiPerW.classList.remove('hidden');
+                document.getElementById('pucPer').required = true;
+                document.getElementById('itiPer').required = true;
+            }
+
+            degreeSelect.onchange = () => {
+                if(degreeSelect.value !== "None") {
+                    gradPerW.classList.remove('hidden');
+                    document.getElementById('gradPer').required = true;
+                } else {
+                    gradPerW.classList.add('hidden');
+                    document.getElementById('gradPer').required = false;
+                    document.getElementById('gradPer').value = "";
+                }
+            };
+        }
+
+        function calculateAge(dobString) {
+            const birthDate = new Date(dobString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const dobVal = document.getElementById('dob').value;
+            const computedAge = calculateAge(dobVal);
+
+            const sslc = parseFloat(document.getElementById('sslcPer').value) || 0;
+            const track = document.getElementById('educationTrack').value;
+            const puc = (track.includes('PUC')) ? (parseFloat(document.getElementById('pucPer').value) || 0) : 100;
+            const iti = (track.includes('ITI')) ? (parseFloat(document.getElementById('itiPer').value) || 0) : 100;
+            const isDegreed = document.getElementById('degree').value !== "None";
+            const grad = isDegreed ? (parseFloat(document.getElementById('gradPer').value) || 0) : 100;
+
+            const ageValid = (computedAge >= 18 && computedAge <= 23);
+            const academicsValid = (sslc >= 50 && puc >= 50 && iti >= 50 && grad >= 50);
+            const isEligible = (ageValid && academicsValid) ? "YES" : "NO";
+
+            const newApp = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                fatherName: document.getElementById('fatherName').value,
+                mobile: document.getElementById('mobile').value,
+                aadhaar: document.getElementById('aadhaar').value,
+                pan: document.getElementById('pan').value.toUpperCase(),
+                dob: dobVal,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                maritalStatus: document.querySelector('input[name="maritalStatus"]:checked').value,
+                candidateType: document.getElementById('candidateType').value,
+                educationTrack: track,
+                degree: document.getElementById('degree').value,
+                pucBranch: document.getElementById('pucBranch').value || "N/A",
+                itiTrade: document.getElementById('itiTrade').value || "N/A",
+                sslcPer: parseFloat(document.getElementById('sslcPer').value),
+                pucPer: parseFloat(document.getElementById('pucPer').value) || 0,
+                itiPer: parseFloat(document.getElementById('itiPer').value) || 0,
+                gradPer: parseFloat(document.getElementById('gradPer').value) || 0,
+                religion: document.getElementById('religion').value,
+                category: document.getElementById('category').value,
+                location: document.getElementById('location').value,
+                district: document.getElementById('district').value,
+                interviewDate: document.getElementById('interviewDate').value,
+                age: computedAge,
+                criteriaMet: isEligible,
+                
+                // Fields modified by Employer Dashboard Controls
+                medicalDate: "",
+                referenceType: "Implants",
+                referenceDetail: "",
+                doj: "",
+                employeeId: "",
+                omsId: "",
+                aadhaarSeeding: "Pending",
+                bankName: "",
+                apCode: "",
+                apMailId: ""
+            };
+
+            applications.push(newApp);
+            alert("Application Submitted Successfully! / ಅರ್ಜಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ!");
+            document.getElementById('registrationForm').reset();
+            toggleEducationFields(); 
+        }
+
+        function clearDateFilter() {
+            document.getElementById('filterDate').value = "";
+            renderEmployerTable();
+        }
+
+        // Mutation data tracking updates engine
+        function updateEmployerField(id, field, value) {
+            const record = applications.find(a => a.id === id);
+            if (record) {
+                record[field] = value;
+                
+                // Explicit trigger context validation logic check for "Others" drop-down trigger items
+                if (field === 'referenceType' && value === 'Others') {
+                    triggerReferenceModal(id, record.referenceDetail);
+                }
+            }
+        }
+
+        // Logic processing parameters for Modal elements
+        function triggerReferenceModal(id, currentText) {
+            activeEditingAppId = id;
+            document.getElementById('modalRefInput').value = currentText || "";
+            document.getElementById('referenceModal').classList.remove('hidden');
+        }
+
+        function saveModalReference() {
+            const inputVal = document.getElementById('modalRefInput').value;
+            if(activeEditingAppId) {
+                updateEmployerField(activeEditingAppId, 'referenceDetail', inputVal);
+                // Dynamically update sub-text label on workspace view quickly
+                const labelElement = document.getElementById(`refLabel-${activeEditingAppId}`);
+                if(labelElement) {
+                    labelElement.innerText = inputVal ? `(${inputVal})` : "(No reference name set)";
+                }
+            }
+            document.getElementById('referenceModal').classList.add('hidden');
+            activeEditingAppId = null;
+        }
+
+        // Matrix processing architecture rendering pipeline engine logic
+        function renderEmployerTable() {
+            const tbody = document.getElementById('employerTableBody');
+            const noData = document.getElementById('noDataMessage');
+            const filterDate = document.getElementById('filterDate').value;
+
+            tbody.innerHTML = "";
+
+            const filteredData = filterDate 
+                ? applications.filter(app => app.interviewDate === filterDate)
+                : applications;
+
+            if (filteredData.length === 0) {
+                noData.classList.remove('hidden');
+                return;
+            } else {
+                noData.classList.add('hidden');
+            }
+
+            filteredData.forEach(app => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition border-b border-gray-200 align-top";
+                const badgeColor = app.criteriaMet === 'YES' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+
+                tr.innerHTML = `
+                    <!-- Col 1: Core Profile Info -->
+                    <td class="p-2 space-y-1">
+                        <div class="font-bold text-gray-900 text-sm">${app.name}</div>
+                        <div class="text-[11px] text-gray-500">Father: ${app.fatherName}</div>
+                        <div class="text-[11px] text-gray-600">Mob: ${app.mobile}</div>
+                        <div class="text-[11px] text-gray-600">PAN: ${app.pan}</div>
+                        <div class="text-[11px] text-blue-600 font-semibold">Aadhaar: [Aadhaar Redacted for Security]</div>
+                    </td>
+
+                    <!-- Col 2: Academics Verification Summary Matrix -->
+                    <td class="p-2 space-y-1">
+                        <div><span class="px-2 py-0.5 text-[10px] font-bold rounded-full ${badgeColor}">Auto Match: ${app.criteriaMet}</span></div>
+                        <div class="text-[11px] mt-1"><strong>Age:</strong> ${app.age} yrs (${app.dob})</div>
+                        <div class="text-[11px] text-gray-700"><strong>Track:</strong> ${app.educationTrack}</div>
+                        <div class="text-[10px] text-gray-500 space-y-0.5 bg-gray-50 p-1 rounded border">
+                            <div>SSLC: ${app.sslcPer}%</div>
+                            ${app.educationTrack.includes('PUC') ? `<div>PUC (${app.pucBranch}): ${app.pucPer}%</div>` : ''}
+                            ${app.educationTrack.includes('ITI') ? `<div>ITI (${app.itiTrade}): ${app.itiPer}%</div>` : ''}
+                            ${app.degree !== 'None' ? `<div>${app.degree}: ${app.gradPer}%</div>` : ''}
+                        </div>
+                    </td>
+
+                    <!-- Col 3: Dates & Selection Status Check boxes components -->
+                    <td class="p-2 space-y-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Interview Date</label>
+                            <input type="date" value="${app.interviewDate}" onchange="updateEmployerField(${app.id}, 'interviewDate', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Medical Date</label>
+                            <input type="date" value="${app.medicalDate || ''}" onchange="updateEmployerField(${app.id}, 'medicalDate', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                    </td>
+
+                    <!-- Col 4: Reference Parameters Selection Blocks -->
+                    <td class="p-2 space-y-1">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Reference Track</label>
+                        <select onchange="updateEmployerField(${app.id}, 'referenceType', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                            <option value="Implants" ${app.referenceType === 'Implants' ? 'selected' : ''}>Implants</option>
+                            <option value="Others" ${app.referenceType === 'Others' ? 'selected' : ''}>Others</option>
+                        </select>
+                        <div class="pt-1">
+                            <span id="refLabel-${app.id}" class="text-[11px] text-blue-600 font-medium italic block max-w-[180px] truncate">
+                                ${app.referenceType === 'Others' && app.referenceDetail ? `(${app.referenceDetail})` : (app.referenceType === 'Others' ? '(Click to specify reference name)' : '')}
+                            </span>
+                            ${app.referenceType === 'Others' ? `<button onclick="triggerReferenceModal(${app.id}, '${app.referenceDetail}')" class="text-[10px] text-blue-500 underline hover:text-blue-700">Edit Reference Name</button>` : ''}
+                        </div>
+                    </td>
+
+                    <!-- Col 5: Production Operational HR Structural Identifiers fields inputs inputs -->
+                    <td class="p-2 bg-blue-50/50 grid grid-cols-2 gap-2 border-l border-blue-100">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600">Date of Joining (DOJ)</label>
+                            <input type="date" value="${app.doj || ''}" onchange="updateEmployerField(${app.id}, 'doj', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600">Employee ID</label>
+                            <input type="text" value="${app.employeeId || ''}" placeholder="EMP-123" onchange="updateEmployerField(${app.id}, 'employeeId', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600">OMS ID</label>
+                            <input type="text" value="${app.omsId || ''}" placeholder="OMS-990" onchange="updateEmployerField(${app.id}, 'omsId', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600">Aadhaar Seeding Status</label>
+                            <select onchange="updateEmployerField(${app.id}, 'aadhaarSeeding', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                                <option value="Pending" ${app.aadhaarSeeding === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Seeded" ${app.aadhaarSeeding === 'Seeded' ? 'selected' : ''}>Seeded</option>
+                                <option value="Failed/Unseeded" ${app.aadhaarSeeding === 'Failed/Unseeded' ? 'selected' : ''}>Failed/Unseeded</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600">Bank Name</label>
+                            <input type="text" value="${app.bankName || ''}" placeholder="SBI, HDFC..." onchange="updateEmployerField(${app.id}, 'bankName', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600">AP Code</label>
+                            <input type="text" value="${app.apCode || ''}" placeholder="AP-88" onchange="updateEmployerField(${app.id}, 'apCode', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-semibold text-gray-600">AP Mail ID</label>
+                            <input type="email" value="${app.apMailId || ''}" placeholder="hr@apcorp.com" onchange="updateEmployerField(${app.id}, 'apMailId', this.value)" class="w-full p-1 border rounded text-xs bg-white">
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Processing Logic Engine for Comprehensive Data Sheets Generator
+        function exportToExcel() {
+            const filterDate = document.getElementById('filterDate').value;
+            const targetedData = filterDate 
+                ? applications.filter(app => app.interviewDate === filterDate)
+                : applications;
+
+            if (targetedData.length === 0) {
+                alert("No records match target selection filters for data download!");
+                return;
+            }
+
+            const flattenedData = targetedData.map(app => ({
+                "Candidate Name": app.name,
+                "Father Name": app.fatherName,
+                "Mobile": app.mobile,
+                "PAN Number": app.pan,
+                "DOB": app.dob,
+                "Age (Years)": app.age,
+                "Gender": app.gender,
+                "Marital Status": app.maritalStatus,
+                "Candidate Type": app.candidateType,
+                "Education Track": app.educationTrack,
+                "Degree Field": app.degree,
+                "PUC Branch": app.pucBranch,
+                "ITI Trade": app.itiTrade,
+                "SSLC %": app.sslcPer + "%",
+                "PUC %": app.pucPer > 0 ? app.pucPer + "%" : "N/A",
+                "ITI %": app.itiPer > 0 ? app.itiPer + "%" : "N/A",
+                "Graduation %": app.gradPer > 0 ? app.gradPer + "%" : "N/A",
+                "Religion": app.religion,
+                "Category (Quota)": app.category,
+                "Village/City": app.location,
+                "District": app.district,
+                "Auto Selection Valid": app.criteriaMet,
+                // New Business Parameters Added Below 
+                "Interview Date": app.interviewDate || "N/A",
+                "Medical Date": app.medicalDate || "N/A",
+                "Reference Channel": app.referenceType,
+                "Reference Name/Context": app.referenceType === 'Others' ? (app.referenceDetail || "Unspecified Name") : "N/A",
+                "Date of Joining (DOJ)": app.doj || "N/A",
+                "Employee ID": app.employeeId || "N/A",
+                "OMS ID": app.omsId || "N/A",
+                "Aadhaar Seeding Status": app.aadhaarSeeding,
+                "Bank Name": app.bankName || "N/A",
+                "AP Code": app.apCode || "N/A",
+                "AP Mail ID": app.apMailId || "N/A"
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Recruitment Roster Dump");
+
+            // Auto column dimensions calibration logic
+            const colWidths = Object.keys(flattenedData[0]).map(key => ({
+                wch: Math.max(key.length + 3, 16)
+            }));
+            worksheet['!cols'] = colWidths;
+
+            const fileName = filterDate ? `Recruitment_Dump_${filterDate}.xlsx` : "Master_Recruitment_Report.xlsx";
+            XLSX.writeFile(workbook, fileName);
+        }
+
+        window.onload = function() {
+            toggleEducationFields();
+        };
+    </script>
+</body>
+</html>
