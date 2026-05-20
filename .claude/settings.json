@@ -4,7 +4,9 @@
       "Bash(python -c ' *)",
       "Bash(python -c \"import flask; print\\('Flask version:', flask.__version__\\)\")",
       "Bash(node --check _check.js)",
-      "Bash(del _check.js)"
+      "Bash(del _check.js)",
+      "Bash(python -m pip show flask)",
+      "Bash(findstr \"Version Name\")"
     ]
   }
 }
