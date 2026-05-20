@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidate Registration / ಅಭ್ಯರ್ಥಿ ನೋಂದಣಿ</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f1f3d;
+  --navy-mid: #162b52;
+  --blue: #1a4fad;
+  --accent: #e8a020;
+  --accent-light: #fdf3e0;
+  --success: #0d7c4a;
+  --success-bg: #e6f7f0;
+  --error: #c0392b;
+  --error-bg: #fdf0ee;
+  --surface: #ffffff;
+  --surface-2: #f7f8fc;
+  --border: #d8dce8;
+  --text: #1a1f36;
+  --text-2: #4a5568;
+  --text-3: #8492a6;
+  --radius: 10px;
+  --shadow: 0 4px 24px rgba(15,31,61,0.10);
+  --shadow-lg: 0 12px 40px rgba(15,31,61,0.16);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--surface-2);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ─── Header ─── */
+header {
+  background: var(--navy);
+  color: #fff;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-text h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.logo-text span {
+  font-size: 0.72rem;
+  opacity: 0.65;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+.admin-link {
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.admin-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* ─── Hero Banner ─── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, #1a3a6b 100%);
+  color: #fff;
+  padding: 48px 24px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: rgba(232,160,32,0.08);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -40px;
+  width: 240px; height: 240px;
+  background: rgba(26,79,173,0.15);
+  border-radius: 50%;
+}
+.hero-content { position: relative; z-index: 1; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(232,160,32,0.18);
+  border: 1px solid rgba(232,160,32,0.35);
+  color: #f5c452;
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.hero h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero h2 span { color: var(--accent); font-style: italic; }
+
+.hero p {
+  opacity: 0.7;
+  font-size: 0.95rem;
+  font-weight: 300;
+  margin-top: 10px;
+}
+
+.steps-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.step-pill {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.85);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.step-pill .num {
+  background: var(--accent);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.7rem;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── Form Container ─── */
+.form-wrap {
+  max-width: 900px;
+  margin: -28px auto 60px;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.form-card {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+/* ─── Progress Bar ─── */
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--accent));
+  width: 20%;
+  transition: width 0.5s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ─── Section ─── */
+.form-section {
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+  animation: fadeUp 0.3s ease;
+}
+.form-section.active { display: block; }
+.form-section:last-of-type { border-bottom: none; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.section-num {
+  width: 32px; height: 32px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.section-title h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.2;
+}
+.section-title p {
+  font-size: 0.78rem;
+  color: var(--text-3);
+  margin-top: 1px;
+}
+
+/* ─── Grid / Fields ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+.col-full { grid-column: 1 / -1; }
+
+@media (max-width: 680px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .col-full { grid-column: 1; }
+  .form-section { padding: 22px 20px; }
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+}
+label .kn {
+  font-weight: 400;
+  color: var(--text-3);
+  font-size: 0.73rem;
+}
+label .req { color: var(--error); margin-left: 2px; }
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="email"],
+select {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  appearance: none;
+}
+input:focus, select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(26,79,173,0.12);
+}
+input.error, select.error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+}
+input.valid {
+  border-color: var(--success);
+}
+input::placeholder { color: var(--text-3); font-weight: 300; }
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238492a6' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+
+.field-hint {
+  font-size: 0.71rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.field-error {
+  font-size: 0.71rem;
+  color: var(--error);
+  margin-top: 2px;
+  display: none;
+}
+.field-error.show { display: block; }
+
+/* ─── Radio / Checkbox ─── */
+.radio-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.radio-btn {
+  flex: 1;
+  min-width: 100px;
+}
+.radio-btn input[type="radio"] { display: none; }
+.radio-btn label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: all 0.15s;
+  text-align: center;
+  background: var(--surface-2);
+}
+.radio-btn input[type="radio"]:checked + label {
+  border-color: var(--blue);
+  background: #eef3fb;
+  color: var(--blue);
+  font-weight: 600;
+}
+.radio-btn label .dot {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.radio-btn input[type="radio"]:checked + label .dot {
+  border-color: var(--blue);
+  background: var(--blue);
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+/* ─── Education Box ─── */
+.edu-box {
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 8px;
+}
+.edu-box-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.edu-box-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Interview Date ─── */
+.interview-date-field input {
+  border-color: #e67e22;
+  background: #fef9f0;
+}
+.interview-date-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(232,160,32,0.15);
+}
+
+/* ─── Nav Buttons ─── */
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.step-dots {
+  display: flex;
+  gap: 7px;
+}
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.3s;
+}
+.step-dot.active { background: var(--blue); width: 22px; border-radius: 4px; }
+.step-dot.done { background: var(--success); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-2);
+}
+.btn-outline:hover { border-color: var(--blue); color: var(--blue); background: #eef3fb; }
+
+.btn-primary {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(15,31,61,0.3);
+}
+.btn-primary:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(26,79,173,0.35); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-success {
+  background: var(--success);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(13,124,74,0.3);
+}
+.btn-success:hover { background: #0a6640; transform: translateY(-1px); }
+
+/* ─── Success Screen ─── */
+#success-screen {
+  display: none;
+  padding: 60px 32px;
+  text-align: center;
+  animation: fadeUp 0.5s ease;
+}
+.success-icon {
+  width: 80px; height: 80px;
+  background: var(--success-bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+}
+#success-screen h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+#success-screen p { color: var(--text-2); font-size: 0.95rem; margin-bottom: 6px; }
+.criteria-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 18px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin: 16px 0;
+}
+.criteria-yes { background: var(--success-bg); color: var(--success); }
+.criteria-no { background: var(--error-bg); color: var(--error); }
+
+/* ─── Loading ─── */
+.btn-loading { position: relative; color: transparent !important; }
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--navy);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s;
+  z-index: 999;
+  max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--success); }
+.toast.error { background: var(--error); }
+
+/* ─── Marks Entry ─── */
+.marks-blocks { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.marks-block {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: var(--surface);
+}
+.marks-block-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.marks-row-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.marks-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 100px;
+}
+.marks-field label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-3);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.marks-sep {
+  font-size: 1.4rem;
+  color: var(--text-3);
+  padding-bottom: 8px;
+  flex-shrink: 0;
+  line-height: 1;
+  font-weight: 200;
+}
+.pct-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-3);
+  transition: all 0.25s;
+  flex-shrink: 0;
+  white-space: nowrap;
+  min-width: 86px;
+  justify-content: center;
+}
+.pct-badge .pct-sym { font-size: 0.7rem; font-weight: 500; margin-left: 2px; }
+.pct-badge.good { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+.pct-badge.bad  { border-color: var(--error);   background: var(--error-bg);   color: var(--error);   }
+@media (max-width: 680px) { .marks-row-inputs { gap: 6px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <h1>JobPortal System</h1>
+        <span>Apprenticeship Recruitment Platform</span>
+      </div>
+    </div>
+    <a href="/admin" class="admin-link">Admin ↗</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+      Open Registration
+    </div>
+    <h2>Candidate Application <span>Form</span></h2>
+    <p>ಅಭ್ಯರ್ಥಿ ಅರ್ಜಿ ನಮೂನೆ — Fill all sections accurately for processing</p>
+    <div class="steps-row">
+      <div class="step-pill"><span class="num">1</span> Personal Info</div>
+      <div class="step-pill"><span class="num">2</span> Demographics</div>
+      <div class="step-pill"><span class="num">3</span> Education</div>
+      <div class="step-pill"><span class="num">4</span> Background & Date</div>
+    </div>
+  </div>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+    <form id="regForm" novalidate>
+
+      <!-- STEP 1: Personal Info -->
+      <div class="form-section active" id="step-1">
+        <div class="section-header">
+          <div class="section-num">1</div>
+          <div class="section-title">
+            <h3>Personal Information</h3>
+            <p>ವೈಯಕ್ತಿಕ ಮಾಹಿತಿ — Basic identification details</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Full Name <span class="kn">/ ಪೂರ್ಣ ಹೆಸರು</span><span class="req">*</span></label>
+            <input type="text" id="name" placeholder="As per Aadhaar card" autocomplete="name">
+            <span class="field-error" id="err-name">Please enter your full name</span>
+          </div>
+          <div class="field">
+            <label>Father's Name <span class="kn">/ ತಂದೆಯ ಹೆಸರು</span><span class="req">*</span></label>
+            <input type="text" id="fatherName" placeholder="Father's full name">
+            <span class="field-error" id="err-fatherName">Please enter father's name</span>
+          </div>
+          <div class="field">
+            <label>Mobile Number <span class="req">*</span></label>
+            <input type="tel" id="mobile" placeholder="10-digit mobile number" maxlength="10">
+            <span class="field-hint">10-digit number without spaces</span>
+            <span class="field-error" id="err-mobile">Enter a valid 10-digit mobile number</span>
+          </div>
+          <div class="field">
+            <label>Date of Birth <span class="kn">/ ಜನ್ಮ ದಿನಾಂಕ</span><span class="req">*</span></label>
+            <input type="date" id="dob" max="">
+            <span class="field-hint">As per SSLC Marks Card</span>
+            <span class="field-error" id="err-dob">Please select date of birth</span>
+          </div>
+          <div class="field">
+            <label>Aadhaar Card Number <span class="req">*</span></label>
+            <input type="text" id="aadhaar" placeholder="12-digit Aadhaar number" maxlength="12">
+            <span class="field-hint">Will be securely stored and redacted in records</span>
+            <span class="field-error" id="err-aadhaar">Enter a valid 12-digit Aadhaar number</span>
+          </div>
+          <div class="field">
+            <label>PAN Card Number <span class="req">*</span></label>
+            <input type="text" id="pan" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase">
+            <span class="field-hint">Format: 5 letters + 4 digits + 1 letter</span>
+            <span class="field-error" id="err-pan">Enter a valid PAN number (e.g., ABCDE1234F)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Demographics -->
+      <div class="form-section" id="step-2">
+        <div class="section-header">
+          <div class="section-num">2</div>
+          <div class="section-title">
+            <h3>Demographics & Status</h3>
+            <p>ಜನಸಂಖ್ಯಾಶಾಸ್ತ್ರ — Personal background information</p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap:20px">
+          <div class="field">
+            <label>Gender <span class="kn">/ ಲಿಂಗ</span><span class="req">*</span></label>
+            <div class="radio-group">
+              <div class="radio-btn">
+                <input type="radio" name="gender" id="g-male" value="Male">
+                <label for="g-male"><span class="dot"></span>Male / ಪುರುಷ</label>
+              </div>
+              <div class="radio-btn">
+                <input type="radio" name="gender" id="g-female" value="Female">
+                <label for="g-female"><span class="dot"></span>Female / ಮಹಿಳೆ</label>
+              </div>
+            </div>
+            <span class="field-error" id="err-gender">Please select gender</span>
+          </div>
+
+          <div class="field">
+            <label>Marital Status <span class="kn">/ ವೈವಾಹಿಕ ಸ್ಥಿತಿ</span><span class="req">*</span></label>
+            <div class="radio-group">
+              <div class="radio-btn">
+                <input type="radio" name="maritalStatus" id="m-unmarried" value="Unmarried">
+                <label for="m-unmarried"><span class="dot"></span>Unmarried</label>
+              </div>
+              <div class="radio-btn">
+                <input type="radio" name="maritalStatus" id="m-married" value="Married">
+                <label for="m-married"><span class="dot"></span>Married</label>
+              </div>
+            </div>
+            <span class="field-error" id="err-marital">Please select marital status</span>
+          </div>
+
+          <div class="field col-full">
+            <label>Candidate Type <span class="kn">/ ಅಭ್ಯರ್ಥಿ ಪ್ರಕಾರ</span><span class="req">*</span></label>
+            <select id="candidateType">
+              <option value="">-- Select Candidate Type --</option>
+              <option value="Fresher">Fresher / ತಾಜಾ ಅಭ್ಯರ್ಥಿ</option>
+              <option value="Rejoiner">Rejoiner / ಮರು ಸೇರ್ಪಡೆ</option>
+              <option value="Outside Apprenticeship Completed">Outside Apprenticeship Completed / ಬಾಹ್ಯ ಅಪ್ರೆಂಟಿಸ್‌ಶಿಪ್ ಮುಗಿದಿದೆ</option>
+            </select>
+            <span class="field-error" id="err-candidateType">Please select candidate type</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Education -->
+      <div class="form-section" id="step-3">
+        <div class="section-header">
+          <div class="section-num">3</div>
+          <div class="section-title">
+            <h3>Educational Background</h3>
+            <p>ಶೈಕ್ಷಣಿಕ ವಿವರಗಳು — Academic qualifications and percentages</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Education Track <span class="kn">/ ಶಿಕ್ಷಣ ಟ್ರ್ಯಾಕ್</span><span class="req">*</span></label>
+            <select id="educationTrack" onchange="toggleEduFields()">
+              <option value="ITI">ITI</option>
+              <option value="PUC">PUC / ಪಿ.ಯು.ಸಿ</option>
+              <option value="ITI+PUC">ITI + PUC</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Higher Degree <span class="kn">/ ಉನ್ನತ ಪದವಿ</span></label>
+            <select id="degree" onchange="toggleGradField()">
+              <option value="None">None / ಅನ್ವಯಿಸುವುದಿಲ್ಲ</option>
+              <option value="Graduation">Graduation / ಪದವಿ</option>
+              <option value="BA">BA / ಬಿಎ</option>
+              <option value="B.Com">B.Com / ಬಿ.ಕಾಂ</option>
+              <option value="BBA">BBA / ಬಿಬಿಎ</option>
+              <option value="BCA">BCA / ಬಿಸಿಎ</option>
+              <option value="B.Sc">B.Sc / ಬಿ.ಎಸ್ಸಿ</option>
+              <option value="B.Ed">B.Ed / ಬಿ.ಎಡ್</option>
+              <option value="D.Ed">D.Ed / ಡಿ.ಎಡ್</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="edu-box" style="margin-top:16px">
+          <div class="edu-box-title">Academic Details</div>
+          <div class="grid-2">
+            <div class="field" id="wrap-pucBranch" style="display:none">
+              <label>PUC Stream <span class="kn">/ ಶಾಖೆ</span><span class="req">*</span></label>
+              <select id="pucBranch">
+                <option value="">-- Select Stream --</option>
+                <option value="Arts">Arts / ಕಲೆ</option>
+                <option value="Commerce">Commerce / ವಾಣಿಜ್ಯ</option>
+                <option value="Science">Science / ವಿಜ್ಞಾನ</option>
+              </select>
+            </div>
+            <div class="field" id="wrap-itiTrade">
+              <label>ITI Trade <span class="kn">/ ಟ್ರೇಡ್</span><span class="req">*</span></label>
+              <select id="itiTrade">
+                <option value="">-- Select Trade --</option>
+                <option value="Electrician">Electrician / ಎಲೆಕ್ಟ್ರಿಷಿಯನ್</option>
+                <option value="Fitter">Fitter / ಫಿಟ್ಟರ್</option>
+                <option value="Welder">Welder / ವೆಲ್ಡರ್</option>
+                <option value="Mechanic Diesel">Mechanic Diesel</option>
+                <option value="Electronics Mechanic">Electronics Mechanic</option>
+                <option value="ADVANCED CNC MACHINING TECHNICIAN">Advanced CNC Machining Technician</option>
+                <option value="Motor Mechanic Vehicle">Motor Mechanic Vehicle</option>
+                <option value="Motor Electric Vehicle">Motor Electric Vehicle</option>
+                <option value="Other">Other / ಇತರೆ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="marks-blocks">
+
+            <div class="marks-block" id="marks-sslc">
+              <div class="marks-block-label">SSLC / 10th Standard <span class="req">*</span></div>
+              <div class="marks-row-inputs">
+                <div class="marks-field">
+                  <label>Obtained Marks</label>
+                  <input type="number" id="sslcObt" min="0" placeholder="e.g. 480" oninput="calcPer('sslcObt','sslcTot','sslcPer','sslcBadge')">
+                </div>
+                <div class="marks-sep">/</div>
+                <div class="marks-field">
+                  <label>Total Marks</label>
+                  <input type="number" id="sslcTot" min="1" placeholder="e.g. 600" oninput="calcPer('sslcObt','sslcTot','sslcPer','sslcBadge')">
+                </div>
+                <div class="pct-badge" id="sslcBadge">— <span class="pct-sym">%</span></div>
+              </div>
+              <input type="hidden" id="sslcPer">
+              <span class="field-error" id="err-sslc">Please enter obtained and total marks</span>
+            </div>
+
+            <div class="marks-block" id="marks-puc" style="display:none">
+              <div class="marks-block-label">PUC / 12th Standard <span class="req">*</span></div>
+              <div class="marks-row-inputs">
+                <div class="marks-field">
+                  <label>Obtained Marks</label>
+                  <input type="number" id="pucObt" min="0" placeholder="e.g. 350" oninput="calcPer('pucObt','pucTot','pucPer','pucBadge')">
+                </div>
+                <div class="marks-sep">/</div>
+                <div class="marks-field">
+                  <label>Total Marks</label>
+                  <input type="number" id="pucTot" min="1" placeholder="e.g. 600" oninput="calcPer('pucObt','pucTot','pucPer','pucBadge')">
+                </div>
+                <div class="pct-badge" id="pucBadge">— <span class="pct-sym">%</span></div>
+              </div>
+              <input type="hidden" id="pucPer">
+            </div>
+
+            <div class="marks-block" id="marks-iti" style="display:none">
+              <div class="marks-block-label">ITI Certificate <span class="req">*</span></div>
+              <div class="marks-row-inputs">
+                <div class="marks-field">
+                  <label>Obtained Marks</label>
+                  <input type="number" id="itiObt" min="0" placeholder="e.g. 420" oninput="calcPer('itiObt','itiTot','itiPer','itiBadge')">
+                </div>
+                <div class="marks-sep">/</div>
+                <div class="marks-field">
+                  <label>Total Marks</label>
+                  <input type="number" id="itiTot" min="1" placeholder="e.g. 500" oninput="calcPer('itiObt','itiTot','itiPer','itiBadge')">
+                </div>
+                <div class="pct-badge" id="itiBadge">— <span class="pct-sym">%</span></div>
+              </div>
+              <input type="hidden" id="itiPer">
+            </div>
+
+            <div class="marks-block" id="marks-grad" style="display:none">
+              <div class="marks-block-label">Graduation <span class="req">*</span></div>
+              <div class="marks-row-inputs">
+                <div class="marks-field">
+                  <label>Obtained Marks</label>
+                  <input type="number" id="gradObt" min="0" placeholder="e.g. 600" oninput="calcPer('gradObt','gradTot','gradPer','gradBadge')">
+                </div>
+                <div class="marks-sep">/</div>
+                <div class="marks-field">
+                  <label>Total Marks</label>
+                  <input type="number" id="gradTot" min="1" placeholder="e.g. 800" oninput="calcPer('gradObt','gradTot','gradPer','gradBadge')">
+                </div>
+                <div class="pct-badge" id="gradBadge">— <span class="pct-sym">%</span></div>
+              </div>
+              <input type="hidden" id="gradPer">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Background & Interview -->
+      <div class="form-section" id="step-4">
+        <div class="section-header">
+          <div class="section-num">4</div>
+          <div class="section-title">
+            <h3>Background & Interview Details</h3>
+            <p>ಹಿನ್ನೆಲೆ ಮತ್ತು ಸಂದರ್ಶನ ವಿವರ — Location and scheduling information</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Religion <span class="kn">/ ಧರ್ಮ</span><span class="req">*</span></label>
+            <select id="religion">
+              <option value="">-- Select Religion --</option>
+              <option value="Hindu">Hindu / ಹಿಂದೂ</option>
+              <option value="Muslim">Muslim / ಮುಸ್ಲಿಂ</option>
+              <option value="Christian">Christian / ಕ್ರಿಶ್ಚಿಯನ್</option>
+              <option value="Other">Other / ಇತರೆ</option>
+            </select>
+            <span class="field-error" id="err-religion">Please select religion</span>
+          </div>
+          <div class="field">
+            <label>Category <span class="kn">/ ವರ್ಗ</span><span class="req">*</span></label>
+            <select id="category">
+              <option value="">-- Select Category --</option>
+              <option value="General">General / ಸಾಮಾನ್ಯ</option>
+              <option value="2A">2A</option>
+              <option value="2B">2B</option>
+              <option value="3B">3B</option>
+              <option value="SC">SC / ಪರಿಶಿಷ್ಟ ಜಾತಿ</option>
+              <option value="ST">ST / ಪರಿಶಿಷ್ಟ ಪಂಗಡ</option>
+              <option value="OBC">OBC</option>
+              <option value="Other">Other</option>
+            </select>
+            <span class="field-error" id="err-category">Please select category</span>
+          </div>
+          <div class="field">
+            <label>Village / City <span class="kn">/ ಗ್ರಾಮ/ನಗರ</span><span class="req">*</span></label>
+            <input type="text" id="location" placeholder="Your village or city name">
+            <span class="field-error" id="err-location">Please enter your location</span>
+          </div>
+          <div class="field">
+            <label>District <span class="kn">/ ಜಿಲ್ಲೆ</span><span class="req">*</span></label>
+            <input type="text" id="district" placeholder="Your district name">
+            <span class="field-error" id="err-district">Please enter your district</span>
+          </div>
+          <div class="field col-full interview-date-field">
+            <label style="color:#c65c00">Planned Interview Date <span class="kn">/ ಸಂದರ್ಶನ ದಿನಾಂಕ</span><span class="req">*</span></label>
+            <input type="date" id="interviewDate">
+            <span class="field-hint">Select your scheduled or preferred interview date</span>
+            <span class="field-error" id="err-interviewDate">Please select interview date</span>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Success Screen -->
+    <div id="success-screen">
+      <div class="success-icon">
+        <svg width="36" height="36" fill="none" stroke="#0d7c4a" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h2>Application Submitted!</h2>
+      <p>ಅರ್ಜಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ</p>
+      <div id="criteria-badge" class="criteria-badge"></div>
+      <p style="color:var(--text-3);font-size:0.85rem;margin-top:4px">Your application has been recorded. You will be contacted on your registered mobile number.</p>
+      <div style="margin-top:28px">
+        <button class="btn btn-primary" onclick="resetForm()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7-7 7 7"/></svg>
+          Submit Another Application
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="form-nav" id="form-nav">
+      <button class="btn btn-outline" id="btn-back" onclick="prevStep()" style="visibility:hidden">
+        ← Back
+      </button>
+      <div class="step-dots">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+      </div>
+      <button class="btn btn-primary" id="btn-next" onclick="nextStep()">
+        Next →
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+function updateProgress() {
+  const pct = (currentStep / totalSteps) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+
+  for (let i = 1; i <= totalSteps; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.className = 'step-dot';
+    if (i < currentStep) dot.classList.add('done');
+    else if (i === currentStep) dot.classList.add('active');
+  }
+
+  document.getElementById('btn-back').style.visibility = currentStep > 1 ? 'visible' : 'hidden';
+  const nextBtn = document.getElementById('btn-next');
+  if (currentStep === totalSteps) {
+    nextBtn.textContent = '';
+    nextBtn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Submit Application';
+    nextBtn.className = 'btn btn-success';
+  } else {
+    nextBtn.textContent = 'Next →';
+    nextBtn.className = 'btn btn-primary';
+  }
+}
+
+function showStep(n) {
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  updateProgress();
+}
+
+function validateStep(step) {
+  let valid = true;
+
+  const required = (id, errId, check) => {
+    const el = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (!el) return;
+    const ok = check ? check(el) : !!el.value.trim();
+    el.classList.toggle('error', !ok);
+    if (err) err.classList.toggle('show', !ok);
+    if (!ok) valid = false;
+  };
+
+  if (step === 1) {
+    required('name', 'err-name');
+    required('fatherName', 'err-fatherName');
+    required('mobile', 'err-mobile', el => /^[0-9]{10}$/.test(el.value));
+    required('dob', 'err-dob');
+    required('aadhaar', 'err-aadhaar', el => /^[0-9]{12}$/.test(el.value));
+    required('pan', 'err-pan', el => /^[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$/.test(el.value));
+  }
+  if (step === 2) {
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const marital = document.querySelector('input[name="maritalStatus"]:checked');
+    const gErr = document.getElementById('err-gender');
+    const mErr = document.getElementById('err-marital');
+    if (!gender) { if(gErr) gErr.classList.add('show'); valid = false; }
+    else { if(gErr) gErr.classList.remove('show'); }
+    if (!marital) { if(mErr) mErr.classList.add('show'); valid = false; }
+    else { if(mErr) mErr.classList.remove('show'); }
+    required('candidateType', 'err-candidateType');
+  }
+  if (step === 3) {
+    const needsMarks = (obtId, totId, errId) => {
+      const obt = document.getElementById(obtId);
+      const tot = document.getElementById(totId);
+      const ok = obt.value !== '' && tot.value !== '' && parseFloat(tot.value) > 0 && parseFloat(obt.value) >= 0;
+      obt.classList.toggle('error', !ok);
+      tot.classList.toggle('error', !ok);
+      const err = errId && document.getElementById(errId);
+      if (err) err.classList.toggle('show', !ok);
+      if (!ok) valid = false;
+    };
+    needsMarks('sslcObt', 'sslcTot', 'err-sslc');
+    const track = document.getElementById('educationTrack').value;
+    if (track.includes('ITI')) needsMarks('itiObt', 'itiTot', null);
+    if (track.includes('PUC')) needsMarks('pucObt', 'pucTot', null);
+    const deg = document.getElementById('degree').value;
+    if (deg && deg !== 'None') needsMarks('gradObt', 'gradTot', null);
+  }
+  if (step === 4) {
+    required('religion', 'err-religion');
+    required('category', 'err-category');
+    required('location', 'err-location');
+    required('district', 'err-district');
+    required('interviewDate', 'err-interviewDate');
+  }
+
+  return valid;
+}
+
+function nextStep() {
+  if (!validateStep(currentStep)) {
+    showToast('Please fill all required fields', 'error');
+    return;
+  }
+  if (currentStep < totalSteps) {
+    showStep(currentStep + 1);
+  } else {
+    submitForm();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) showStep(currentStep - 1);
+}
+
+function toggleEduFields() {
+  const track = document.getElementById('educationTrack').value;
+  const show = (id, vis) => { const el = document.getElementById(id); if (el) el.style.display = vis ? '' : 'none'; };
+  show('wrap-pucBranch', track.includes('PUC'));
+  show('wrap-itiTrade', track.includes('ITI'));
+  show('marks-puc', track.includes('PUC'));
+  show('marks-iti', track.includes('ITI'));
+}
+
+function toggleGradField() {
+  const deg = document.getElementById('degree').value;
+  document.getElementById('marks-grad').style.display = deg !== 'None' ? '' : 'none';
+}
+
+function calcPer(obtId, totId, perId, badgeId) {
+  const obt = parseFloat(document.getElementById(obtId).value);
+  const tot = parseFloat(document.getElementById(totId).value);
+  const badge = document.getElementById(badgeId);
+  const perInput = document.getElementById(perId);
+  if (!isNaN(obt) && !isNaN(tot) && tot > 0 && obt >= 0) {
+    const pct = Math.min((obt / tot) * 100, 100).toFixed(2);
+    perInput.value = pct;
+    badge.innerHTML = pct + '<span class="pct-sym">%</span>';
+    badge.className = 'pct-badge ' + (parseFloat(pct) >= 50 ? 'good' : 'bad');
+  } else {
+    perInput.value = '';
+    badge.innerHTML = '—<span class="pct-sym">%</span>';
+    badge.className = 'pct-badge';
+  }
+}
+
+async function submitForm() {
+  const btn = document.getElementById('btn-next');
+  btn.classList.add('btn-loading');
+  btn.disabled = true;
+
+  const track = document.getElementById('educationTrack').value;
+  const payload = {
+    name: document.getElementById('name').value,
+    fatherName: document.getElementById('fatherName').value,
+    mobile: document.getElementById('mobile').value,
+    aadhaar: document.getElementById('aadhaar').value,
+    pan: document.getElementById('pan').value.toUpperCase(),
+    dob: document.getElementById('dob').value,
+    gender: document.querySelector('input[name="gender"]:checked')?.value,
+    maritalStatus: document.querySelector('input[name="maritalStatus"]:checked')?.value,
+    candidateType: document.getElementById('candidateType').value,
+    educationTrack: track,
+    degree: document.getElementById('degree').value,
+    pucBranch: document.getElementById('pucBranch').value || 'N/A',
+    itiTrade: document.getElementById('itiTrade').value || 'N/A',
+    sslcPer: document.getElementById('sslcPer').value,
+    pucPer: document.getElementById('pucPer').value || 0,
+    itiPer: document.getElementById('itiPer').value || 0,
+    gradPer: document.getElementById('gradPer').value || 0,
+    religion: document.getElementById('religion').value,
+    category: document.getElementById('category').value,
+    location: document.getElementById('location').value,
+    district: document.getElementById('district').value,
+    interviewDate: document.getElementById('interviewDate').value
+  };
+
+  try {
+    const res = await fetch('/api/candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.querySelector('.progress-fill').style.width = '100%';
+      document.getElementById('regForm').style.display = 'none';
+      document.getElementById('form-nav').style.display = 'none';
+      const ss = document.getElementById('success-screen');
+      ss.style.display = 'block';
+
+      const badge = document.getElementById('criteria-badge');
+      if (data.criteriaMet === 'YES') {
+        badge.className = 'criteria-badge criteria-yes';
+        badge.innerHTML = '✓ Eligibility Criteria Met — ಅರ್ಹತಾ ಮಾನದಂಡ ಪೂರೈಸಲಾಗಿದೆ';
+      } else {
+        badge.className = 'criteria-badge criteria-no';
+        badge.innerHTML = '✗ Does not meet all criteria — ಮಾನದಂಡ ಪೂರೈಸಿಲ್ಲ';
+      }
+    } else {
+      showToast(data.error || 'Submission failed. Please try again.', 'error');
+    }
+  } catch (e) {
+    showToast('Network error. Please check your connection.', 'error');
+  }
+
+  btn.classList.remove('btn-loading');
+  btn.disabled = false;
+}
+
+function resetForm() {
+  document.getElementById('regForm').reset();
+  document.getElementById('regForm').style.display = '';
+  document.getElementById('form-nav').style.display = '';
+  document.getElementById('success-screen').style.display = 'none';
+  ['sslcBadge','pucBadge','itiBadge','gradBadge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.innerHTML = '—<span class="pct-sym">%</span>'; el.className = 'pct-badge'; }
+  });
+  toggleEduFields();
+  toggleGradField();
+  showStep(1);
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Init
+document.getElementById('dob').max = new Date().toISOString().split('T')[0];
+toggleEduFields();
+toggleGradField();
+updateProgress();
+
+// Live validation clear on input
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', () => {
+    el.classList.remove('error');
+    const errEl = document.getElementById('err-' + el.id);
+    if (errEl) errEl.classList.remove('show');
+  });
+});
+</script>
+</body>
+</html>
