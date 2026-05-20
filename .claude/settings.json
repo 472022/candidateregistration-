@@ -6,7 +6,8 @@
       "Bash(node --check _check.js)",
       "Bash(del _check.js)",
       "Bash(python -m pip show flask)",
-      "Bash(findstr \"Version Name\")"
+      "Bash(findstr \"Version Name\")",
+      "Bash(python -c \"import app; print\\('app loaded OK'\\); print\\('DB path:', app.DB_PATH\\)\")"
     ]
   }
 }

@@ -111,6 +111,9 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Run at import time so Gunicorn (and direct runs) both initialise the DB.
+init_db()
+
 # ─────────────────────────────────────────────
 # Auth Helper
 # ─────────────────────────────────────────────
@@ -428,9 +431,10 @@ def export_candidates():
 
 # ─────────────────────────────────────────────
 if __name__ == '__main__':
-    init_db()
-    print("✅ JobPortal System running on http://localhost:5000")
-    print("   Public Form:   http://localhost:5000/")
-    print("   Admin Panel:   http://localhost:5000/admin")
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    print(f"✅ JobPortal System running on http://localhost:{port}")
+    print("   Public Form:   http://localhost:{port}/")
+    print("   Admin Panel:   http://localhost:{port}/admin")
     print("   Credentials:   admin / admin123")
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=port, debug=debug)
