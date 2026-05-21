@@ -311,7 +311,6 @@ def get_candidates():
     candidates = []
     for row in rows:
         c = dict(row)
-        c['aadhaar'] = '[Redacted]'  # Security: never expose Aadhaar
         candidates.append(c)
 
     return jsonify(candidates)
@@ -463,7 +462,7 @@ def export_candidates():
             r.get('employee_id', ''), r.get('oms_id', ''),
             r.get('aadhaar_seeding', 'Pending'), r.get('bank_name', ''),
             r.get('ap_code', ''), r.get('ap_mail_id', ''),
-            r['submitted_at'], '[Redacted]'
+            r['submitted_at'], r.get('aadhaar', '')
         ])
 
     from flask import Response
