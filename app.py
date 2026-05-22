@@ -43,6 +43,7 @@ def _migrate(conn):
         ("bank_name",       "TEXT DEFAULT ''"),
         ("ap_code",         "TEXT DEFAULT ''"),
         ("ap_mail_id",      "TEXT DEFAULT ''"),
+        ("rejection_remarks", "TEXT DEFAULT ''"),
     ]
     for col, defn in new_cols:
         try:
@@ -92,7 +93,8 @@ def init_db():
         aadhaar_seeding TEXT DEFAULT 'Pending',
         bank_name TEXT DEFAULT '',
         ap_code TEXT DEFAULT '',
-        ap_mail_id TEXT DEFAULT ''
+        ap_mail_id TEXT DEFAULT '',
+        rejection_remarks TEXT DEFAULT ''
     )''')
 
     _migrate(conn)
@@ -323,7 +325,7 @@ def update_candidate(cid):
         'interview_status', 'medical_status', 'interview_date',
         'medical_date', 'reference_type', 'reference_detail',
         'doj', 'employee_id', 'oms_id', 'aadhaar_seeding',
-        'bank_name', 'ap_code', 'ap_mail_id'
+        'bank_name', 'ap_code', 'ap_mail_id', 'rejection_remarks'
     ]
     
     updates = {k: v for k, v in data.items() if k in allowed_fields}
@@ -472,6 +474,138 @@ def export_candidates():
         mimetype='text/csv',
         headers={'Content-Disposition': f'attachment; filename={filename}'}
     )
+
+# ── Backup & Restore ──────────────────────────
+
+@app.route('/api/admin/backup', methods=['GET'])
+@login_required
+def backup_data():
+    conn = get_db()
+    rows = conn.execute('SELECT * FROM candidates').fetchall()
+    conn.close()
+
+    candidates = [dict(row) for row in rows]
+    payload = {
+        'schema_version': 2,
+        'exported_at': datetime.utcnow().isoformat() + 'Z',
+        'candidates': candidates
+    }
+
+    from flask import Response
+    filename = f'jobportal_backup_{datetime.utcnow().strftime("%Y%m%d_%H%M%S")}.json'
+    return Response(
+        json.dumps(payload, indent=2, default=str),
+        mimetype='application/json',
+        headers={'Content-Disposition': f'attachment; filename={filename}'}
+    )
+
+
+@app.route('/api/admin/restore', methods=['POST'])
+@login_required
+def restore_data():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+
+    f = request.files['file']
+    try:
+        payload = json.loads(f.read().decode('utf-8'))
+    except Exception:
+        return jsonify({'error': 'Invalid JSON file'}), 400
+
+    candidates = payload.get('candidates')
+    if not isinstance(candidates, list):
+        return jsonify({'error': 'Invalid backup format: missing candidates list'}), 400
+
+    KNOWN_COLUMNS = {
+        'name', 'father_name', 'mobile', 'aadhaar', 'pan', 'dob', 'age',
+        'gender', 'marital_status', 'candidate_type', 'education_track',
+        'degree', 'puc_branch', 'iti_trade', 'sslc_per', 'puc_per', 'iti_per',
+        'grad_per', 'religion', 'category', 'location', 'district',
+        'interview_date', 'criteria_met', 'interview_status', 'medical_status',
+        'submitted_at', 'medical_date', 'reference_type', 'reference_detail',
+        'doj', 'employee_id', 'oms_id', 'aadhaar_seeding', 'bank_name',
+        'ap_code', 'ap_mail_id', 'rejection_remarks'
+    }
+
+    conn = get_db()
+    try:
+        conn.execute('BEGIN')
+        conn.execute('DELETE FROM candidates')
+        restored = 0
+        for c in candidates:
+            safe = {k: v for k, v in c.items() if k in KNOWN_COLUMNS}
+            if not safe.get('name'):
+                continue
+            cols = ', '.join(safe.keys())
+            placeholders = ', '.join(['?'] * len(safe))
+            conn.execute(
+                f'INSERT INTO candidates ({cols}) VALUES ({placeholders})',
+                list(safe.values())
+            )
+            restored += 1
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return jsonify({'error': f'Restore failed: {str(e)}'}), 500
+
+    conn.close()
+    return jsonify({'success': True, 'restored': restored})
+
+
+# ── Admin Profile ─────────────────────────────
+
+@app.route('/api/admin/profile', methods=['GET'])
+@login_required
+def get_profile():
+    username = session.get('admin_username')
+    conn = get_db()
+    admin = conn.execute(
+        'SELECT id, username FROM admins WHERE username = ?', (username,)
+    ).fetchone()
+    conn.close()
+    if not admin:
+        return jsonify({'error': 'Admin not found'}), 404
+    return jsonify({'id': admin['id'], 'username': admin['username']})
+
+
+@app.route('/api/admin/profile/password', methods=['PATCH'])
+@login_required
+def change_password():
+    data = request.get_json()
+    current_password = data.get('current_password', '')
+    new_password = data.get('new_password', '')
+    confirm_password = data.get('confirm_password', '')
+
+    if not current_password or not new_password or not confirm_password:
+        return jsonify({'error': 'All fields are required'}), 400
+    if new_password != confirm_password:
+        return jsonify({'error': 'New passwords do not match'}), 400
+    if len(new_password) < 6:
+        return jsonify({'error': 'New password must be at least 6 characters'}), 400
+
+    username = session.get('admin_username')
+    current_hash = hashlib.sha256(current_password.encode()).hexdigest()
+
+    conn = get_db()
+    admin = conn.execute(
+        'SELECT * FROM admins WHERE username = ? AND password_hash = ?',
+        (username, current_hash)
+    ).fetchone()
+
+    if not admin:
+        conn.close()
+        return jsonify({'error': 'Current password is incorrect'}), 400
+
+    new_hash = hashlib.sha256(new_password.encode()).hexdigest()
+    conn.execute(
+        'UPDATE admins SET password_hash = ? WHERE username = ?',
+        (new_hash, username)
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
 
 # ─────────────────────────────────────────────
 if __name__ == '__main__':
